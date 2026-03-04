@@ -10,6 +10,8 @@ services:
       - ./data:/app/data
       - ./config:/app/config
   neo4j:
+    # 可选：Neo4j图数据库（预留，当前使用NetworkX进行本地图操作）
+    # 如需启用Neo4j持久化存储，取消下方注释
     image: neo4j:5
     ports:
       - "7474:7474"

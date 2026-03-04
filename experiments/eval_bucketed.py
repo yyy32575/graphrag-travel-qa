@@ -8,6 +8,8 @@ import sys
 from collections import defaultdict
 from typing import Any, Dict, List
 
+import jieba
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
@@ -40,8 +42,8 @@ def compute_metrics(predictions: List[str], references: List[str]) -> Dict[str, 
     recalls = []
 
     for pred, ref in zip(predictions, references):
-        pred_tokens = set(pred.strip())
-        ref_tokens = set(ref.strip())
+        pred_tokens = set(jieba.cut(pred.strip()))
+        ref_tokens = set(jieba.cut(ref.strip()))
 
         # 精确匹配
         if pred.strip() == ref.strip():

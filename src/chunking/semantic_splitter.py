@@ -161,7 +161,7 @@ class SemanticSplitter:
                 buffer = chunk
             elif len(buffer) < self.min_chunk_size:
                 # buffer hasn't reached minimum size yet — keep accumulating
-                buffer = buffer + chunk
+                buffer += chunk
             else:
                 # buffer meets minimum size — commit it and start fresh
                 result.append(buffer)

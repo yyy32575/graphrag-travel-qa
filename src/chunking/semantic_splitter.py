@@ -157,19 +157,15 @@ class SemanticSplitter:
         buffer = ""
 
         for chunk in chunks:
-            # 合并过小的块
-            if len(buffer) + len(chunk) < self.min_chunk_size:
-                buffer = buffer + chunk if buffer else chunk
+            if not buffer:
+                buffer = chunk
+            elif len(buffer) < self.min_chunk_size:
+                # buffer hasn't reached minimum size yet — keep accumulating
+                buffer = buffer + chunk
             else:
-                if buffer:
-                    # 如果buffer已满足最小大小，提交并开始新块
-                    if len(buffer) >= self.min_chunk_size:
-                        result.append(buffer)
-                        buffer = chunk
-                    else:
-                        buffer = buffer + chunk
-                else:
-                    buffer = chunk
+                # buffer meets minimum size — commit it and start fresh
+                result.append(buffer)
+                buffer = chunk
 
             # 分割过大的块
             while len(buffer) > self.max_chunk_size:

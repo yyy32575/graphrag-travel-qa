@@ -35,19 +35,20 @@ class OverlapWindowSplitter:
         self.overlap_size = overlap_size
         self.split_by = split_by
 
-    def _tokenize(self, text: str) -> List[str]:
-        """简单的中文分词（按字符分割）
+    def _tokenize(self, text: str) -> List[tuple]:
+        """简单的中文分词（保留位置信息）
         
         Args:
             text: 输入文本
             
         Returns:
-            词语列表
+            (token, start, end) 元组列表，start/end 为原始文本中的字符偏移量
         """
-        # 简单按空格和标点分割，适用于中文
         import re
-        tokens = re.findall(r'[\u4e00-\u9fff]+|[a-zA-Z0-9]+|[^\s]', text)
-        return tokens
+        return [
+            (m.group(), m.start(), m.end())
+            for m in re.finditer(r'[\u4e00-\u9fff]+|[a-zA-Z0-9]+|[^\s]', text)
+        ]
 
     def split(self, text: str) -> List[Chunk]:
         """将文本按滑动窗口分割
@@ -120,7 +121,8 @@ class OverlapWindowSplitter:
         while start < len(tokens):
             end = min(start + self.chunk_size, len(tokens))
             chunk_tokens = tokens[start:end]
-            chunk_text = "".join(chunk_tokens)
+            # Reconstruct from original text to preserve inter-token whitespace
+            chunk_text = text[chunk_tokens[0][1]:chunk_tokens[-1][2]]
             if chunk_text.strip():
                 chunks.append(Chunk(
                     chunk_id=f"chunk_{i:04d}",

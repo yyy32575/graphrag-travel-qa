@@ -276,9 +276,11 @@ class TestPipelineEndToEnd:
             ]
             mock_splitter.split.return_value = mock_chunks
 
+            # 先创建pipeline（会读取真实config文件），然后mock open用于build_indices中的数据读取
+            pipeline = GraphRAGPipeline(config_path="config/settings.yaml")
+
             with patch("builtins.open", mock_open(read_data="# 测试文档\n内容")):
                 with patch("os.makedirs"):
-                    pipeline = GraphRAGPipeline(config_path="config/settings.yaml")
                     result = pipeline.build_indices("data/raw/test.md")
 
         assert "chunk_count" in result

@@ -1,0 +1,45 @@
+embedding:
+  model_name: "BAAI/bge-base-zh-v1.5"
+  device: "cpu"
+  batch_size: 32
+
+chunking:
+  strategy: "semantic"
+  semantic:
+    similarity_threshold: 0.5
+    min_chunk_size: 100
+    max_chunk_size: 1024
+  overlap:
+    chunk_size: 512
+    overlap_size: 64
+
+retrieval:
+  dense:
+    top_k: 20
+  sparse:
+    top_k: 20
+  hybrid:
+    rrf_k: 60
+    dense_weight: 0.6
+    sparse_weight: 0.4
+  reranker:
+    model_name: "BAAI/bge-reranker-base"
+    top_k: 10
+    batch_size: 16
+  graph_expansion:
+    max_hops: 2
+    decay_factor: 0.7
+    min_path_score: 0.1
+    max_expanded_chunks: 5
+
+generation:
+  model_name: "gpt-3.5-turbo"
+  temperature: 0.1
+  max_tokens: 1024
+  confidence_threshold: 0.4
+  evidence_required: true
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  cors_origins: ["*"]
